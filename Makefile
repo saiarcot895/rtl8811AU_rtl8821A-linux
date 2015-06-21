@@ -16,6 +16,15 @@ EXTRA_CFLAGS += -Wno-unused
 
 #EXTRA_CFLAGS += -Wno-uninitialized
 
+GCC_VER := $(subst ., ,$(shell gcc -dumpversion))
+GCC_VER_MAJOR := $(word 1,$(GCC_VER))
+GCC_VER_MINOR := $(word 2,$(GCC_VER))
+
+ifeq ($(shell awk -v V=$(GCC_VER_MAJOR).$(GCC_VER_MINOR) \
+'BEGIN{print (V>=4.9)?"y":"n"}'),y)
+EXTRA_CFLAGS += -Wno-error=date-time
+endif
+
 EXTRA_CFLAGS += -I$(src)/include
 
 EXTRA_LDFLAGS += --strip-debug
