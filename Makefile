@@ -1266,7 +1266,7 @@ ifneq ($(USER_MODULE_NAME),)
 MODULE_NAME := $(USER_MODULE_NAME)
 endif
 
-ifneq ($(KERNELRELEASE),)
+#ifneq ($(KERNELRELEASE),)
 
 rtk_core :=	core/rtw_cmd.o \
 		core/rtw_security.o \
@@ -1320,10 +1320,12 @@ ifeq ($(CONFIG_RTL8821A), y)
 $(MODULE_NAME)-$(CONFIG_MP_INCLUDED)+= core/rtw_bt_mp.o
 endif
 
+obj-$(CONFIG_RTL8812AU) := $(MODULE_NAME).o
 obj-$(CONFIG_RTL8821AU) := $(MODULE_NAME).o
 
-else
+#else
 
+export CONFIG_RTL8812AU = m
 export CONFIG_RTL8821AU = m
 
 all: modules
@@ -1364,5 +1366,5 @@ clean:
 	rm -fr Module.symvers ; rm -fr Module.markers ; rm -fr modules.order
 	rm -fr *.mod.c *.mod *.o .*.cmd *.ko *~
 	rm -fr .tmp_versions
-endif
+#endif
 
