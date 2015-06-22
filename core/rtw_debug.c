@@ -23,6 +23,10 @@
 
 u32 GlobalDebugLevel = _drv_err_;
 
+u8 g_fwdl_chksum_fail = 0;
+u8 g_fwdl_wintint_rdy_fail = 0;
+u32 g_wait_hiq_empty = 0;
+
 #ifdef CONFIG_DEBUG_RTL871X
 
 	u64 GlobalDebugComponents = \
@@ -522,7 +526,7 @@ int proc_get_ap_info(struct seq_file *m, void *v)
 		DBG_871X_SEL_NL(m, "vht_en=%d, vht_sgi_80m=%d\n", psta->vhtpriv.vht_option, psta->vhtpriv.sgi_80m);
 		DBG_871X_SEL_NL(m, "vht_ldpc_cap=0x%x, vht_stbc_cap=0x%x, vht_beamform_cap=0x%x\n", psta->vhtpriv.ldpc_cap, psta->vhtpriv.stbc_cap, psta->vhtpriv.beamform_cap);
 		DBG_871X_SEL_NL(m, "vht_mcs_map=0x%x, vht_highest_rate=0x%x, vht_ampdu_len=%d\n", *(u16*)psta->vhtpriv.vht_mcs_map, psta->vhtpriv.vht_highest_rate, psta->vhtpriv.ampdu_len);
-#endif
+#endif //CONFIG_80211AC_VHT
 					
 		for(i=0;i<16;i++)
 		{							
@@ -577,7 +581,7 @@ int proc_get_trx_info(struct seq_file *m, void *v)
 
 #ifdef CONFIG_USB_HCI
 	DBG_871X_SEL_NL(m, "rx_urb_pending_cn=%d\n", precvpriv->rx_pending_cnt);
-#endif
+#endif //CONFIG_USB_HCI
 
 	return 0;
 }
@@ -619,9 +623,6 @@ ssize_t proc_set_rate_ctl(struct file *file, const char __user *buffer, size_t c
 	return count;
 }
 
-u8 g_fwdl_chksum_fail = 0;
-u8 g_fwdl_wintint_rdy_fail = 0;
-
 ssize_t proc_set_fwdl_test_case(struct file *file, const char __user *buffer, size_t count, loff_t *pos, void *data)
 {
 	struct net_device *dev = data;
@@ -638,7 +639,6 @@ ssize_t proc_set_fwdl_test_case(struct file *file, const char __user *buffer, si
 	return count;
 }
 
-u32 g_wait_hiq_empty = 0;
 
 ssize_t proc_set_wait_hiq_empty(struct file *file, const char __user *buffer, size_t count, loff_t *pos, void *data)
 {
@@ -1151,7 +1151,7 @@ int proc_get_all_sta_info(struct seq_file *m, void *v)
 	return 0;
 }
 	
-#endif		
+#endif //CONFIG_AP_MODE
 
 #ifdef DBG_MEMORY_LEAK
 #include <asm/atomic.h>
@@ -1386,5 +1386,5 @@ ssize_t proc_set_sreset(struct file *file, const char __user *buffer, size_t cou
 }
 #endif /* DBG_CONFIG_ERROR_DETECT */
 
-#endif
+#endif //CONFIG_DEBUG_RTL871X
 
