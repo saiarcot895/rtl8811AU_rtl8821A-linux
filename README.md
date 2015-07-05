@@ -1,6 +1,12 @@
 rtl8811AU_rtl8821A-linux
 ========================
 
+### Changes
+
+I've updated the driver so that it compiles on Linux kernel 3.19.0. I've also enabled support for the cfg80211 API in Linux.
+
+### Original Description (@Braklet)
+
 Initial repository based on Realtek driver rtl8811AU_linux_v4.3.0_10674.20140509.
 
 Primarily intended for my Edimax EW-7811UTC AC600 USB wireless interface, but should work for any device based on the
@@ -10,3 +16,4 @@ I needed a better-performing driver than the v4.2.2 version available for downlo
 works great.
 
 I found that similar drivers from ASUS and D-Link sources were missing the RTL8821A extensions required for my Edimax.
+
