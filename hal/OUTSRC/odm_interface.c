@@ -306,7 +306,7 @@ ODM_MoveMemory(
 #if(DM_ODM_SUPPORT_TYPE & (ODM_AP|ODM_ADSL))
 	
 #elif (DM_ODM_SUPPORT_TYPE & ODM_CE )	
-	_rtw_memcpy(pDest, pSrc, Length);
+	memcpy(pDest, pSrc, Length);
 #elif(DM_ODM_SUPPORT_TYPE & ODM_WIN)
 	PlatformMoveMemory(pDest, pSrc, Length);
 #endif	

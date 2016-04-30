@@ -110,7 +110,7 @@ static void _init_mp_priv_(struct mp_priv *pmp_priv)
 {
 	WLAN_BSSID_EX *pnetwork;
 
-	_rtw_memset(pmp_priv, 0, sizeof(struct mp_priv));
+	memset(pmp_priv, 0, sizeof(struct mp_priv));
 
 	pmp_priv->mode = MP_OFF;
 
@@ -141,10 +141,10 @@ static void _init_mp_priv_(struct mp_priv *pmp_priv)
 	pmp_priv->bSetRxBssid = _FALSE;
 
 	pnetwork = &pmp_priv->mp_network.network;
-	_rtw_memcpy(pnetwork->MacAddress, pmp_priv->network_macaddr, ETH_ALEN);
+	memcpy(pnetwork->MacAddress, pmp_priv->network_macaddr, ETH_ALEN);
 
 	pnetwork->Ssid.SsidLength = 8;
-	_rtw_memcpy(pnetwork->Ssid.Ssid, "mp_871x", pnetwork->Ssid.SsidLength);
+	memcpy(pnetwork->Ssid.Ssid, "mp_871x", pnetwork->Ssid.SsidLength);
 }
 
 #ifdef PLATFORM_WINDOWS
@@ -259,13 +259,13 @@ static void mp_init_xmit_attrib(struct mp_tx *pmptx, PADAPTER padapter)
 
 	// init xmitframe attribute
 	pattrib = &pmptx->attrib;
-	_rtw_memset(pattrib, 0, sizeof(struct pkt_attrib));
-	_rtw_memset(pmptx->desc, 0, TXDESC_SIZE);
+	memset(pattrib, 0, sizeof(struct pkt_attrib));
+	memset(pmptx->desc, 0, TXDESC_SIZE);
 
 	pattrib->ether_type = 0x8712;
-	//_rtw_memcpy(pattrib->src, padapter->eeprompriv.mac_addr, ETH_ALEN);
-//	_rtw_memcpy(pattrib->ta, pattrib->src, ETH_ALEN);
-	_rtw_memset(pattrib->dst, 0xFF, ETH_ALEN);
+	//memcpy(pattrib->src, padapter->eeprompriv.mac_addr, ETH_ALEN);
+//	memcpy(pattrib->ta, pattrib->src, ETH_ALEN);
+	memset(pattrib->dst, 0xFF, ETH_ALEN);
 
 //	pattrib->dhcp_pkt = 0;
 //	pattrib->pktlen = 0;
@@ -728,21 +728,21 @@ u32 mp_join(PADAPTER padapter,u8 mode)
 	struct mlme_priv *pbuddymlmepriv = &pbuddyadapter->mlmepriv;
 	
 	// 1. initialize a new WLAN_BSSID_EX
-	_rtw_memset(&bssid, 0, sizeof(WLAN_BSSID_EX));
+	memset(&bssid, 0, sizeof(WLAN_BSSID_EX));
 	DBG_8192C("%s ,pmppriv->network_macaddr=%x %x %x %x %x %x \n",__func__,
 				pmppriv->network_macaddr[0],pmppriv->network_macaddr[1],pmppriv->network_macaddr[2],pmppriv->network_macaddr[3],pmppriv->network_macaddr[4],pmppriv->network_macaddr[5]);
-	_rtw_memcpy(bssid.MacAddress, pmppriv->network_macaddr, ETH_ALEN);
+	memcpy(bssid.MacAddress, pmppriv->network_macaddr, ETH_ALEN);
 	
 	if( mode==WIFI_FW_ADHOC_STATE ){
 		bssid.Ssid.SsidLength = strlen("mp_pseudo_adhoc");
-		_rtw_memcpy(bssid.Ssid.Ssid, (u8*)"mp_pseudo_adhoc", bssid.Ssid.SsidLength);
+		memcpy(bssid.Ssid.Ssid, (u8*)"mp_pseudo_adhoc", bssid.Ssid.SsidLength);
 		bssid.InfrastructureMode = Ndis802_11IBSS;
 		bssid.NetworkTypeInUse = Ndis802_11DS;
 		bssid.IELength = 0;
 
 	}else if(mode==WIFI_FW_STATION_STATE){
 		bssid.Ssid.SsidLength = strlen("mp_pseudo_STATION");
-		_rtw_memcpy(bssid.Ssid.Ssid, (u8*)"mp_pseudo_STATION", bssid.Ssid.SsidLength);
+		memcpy(bssid.Ssid.Ssid, (u8*)"mp_pseudo_STATION", bssid.Ssid.SsidLength);
 		bssid.InfrastructureMode = Ndis802_11Infrastructure;
 		bssid.NetworkTypeInUse = Ndis802_11DS;
 		bssid.IELength = 0;
@@ -806,7 +806,7 @@ u32 mp_join(PADAPTER padapter,u8 mode)
 	//3 3. join psudo AdHoc
 	tgt_network->join_res = 1;
 	tgt_network->aid = psta->aid = 1;
-	_rtw_memcpy(&tgt_network->network, &bssid, length);
+	memcpy(&tgt_network->network, &bssid, length);
 
 	rtw_indicate_connect(padapter);
 	_clr_fwstate_(pmlmepriv, _FW_UNDER_LINKING);
@@ -921,7 +921,7 @@ void mp_stop_test(PADAPTER padapter)
 	pmlmepriv->fw_state = pmppriv->prev_fw_state; // WIFI_STATION_STATE;
 
 	//flush the cur_network
-	_rtw_memset(tgt_network, 0, sizeof(struct wlan_network));
+	memset(tgt_network, 0, sizeof(struct wlan_network));
 	
 	_clr_fwstate_(pmlmepriv, WIFI_MP_STATE);
 
@@ -1276,8 +1276,8 @@ static thread_return mp_xmit_packet_thread(thread_context context)
 				continue;
 			}
 		}
-		_rtw_memcpy((u8 *)(pxmitframe->buf_addr+TXDESC_OFFSET), pmptx->buf, pmptx->write_size);
-		_rtw_memcpy(&(pxmitframe->attrib), &(pmptx->attrib), sizeof(struct pkt_attrib));
+		memcpy((u8 *)(pxmitframe->buf_addr+TXDESC_OFFSET), pmptx->buf, pmptx->write_size);
+		memcpy(&(pxmitframe->attrib), &(pmptx->attrib), sizeof(struct pkt_attrib));
 
 		
 		rtw_udelay_os(padapter->mppriv.pktInterval);
@@ -1309,7 +1309,7 @@ exit:
 void fill_txdesc_for_mp(PADAPTER padapter, u8 *ptxdesc)
 {		
 	struct mp_priv *pmp_priv = &padapter->mppriv;
-	_rtw_memcpy(ptxdesc, pmp_priv->tx.desc, TXDESC_SIZE);
+	memcpy(ptxdesc, pmp_priv->tx.desc, TXDESC_SIZE);
 }
 
 #if defined(CONFIG_RTL8192C) || defined(CONFIG_RTL8192D)
@@ -1576,9 +1576,9 @@ void SetPacketTx(PADAPTER padapter)
 
 	//3 1. update_attrib()
 	pattrib = &pmp_priv->tx.attrib;
-	_rtw_memcpy(pattrib->src, padapter->eeprompriv.mac_addr, ETH_ALEN);
-	_rtw_memcpy(pattrib->ta, pattrib->src, ETH_ALEN);
-	_rtw_memcpy(pattrib->ra, pattrib->dst, ETH_ALEN);
+	memcpy(pattrib->src, padapter->eeprompriv.mac_addr, ETH_ALEN);
+	memcpy(pattrib->ta, pattrib->src, ETH_ALEN);
+	memcpy(pattrib->ra, pattrib->dst, ETH_ALEN);
 	bmcast = IS_MCAST(pattrib->ra);
 	if (bmcast) {
 		pattrib->mac_id = 1;
@@ -1606,7 +1606,7 @@ void SetPacketTx(PADAPTER padapter)
 	pmp_priv->tx.buf = (u8 *)N_BYTE_ALIGMENT((SIZE_PTR)(pmp_priv->tx.pallocated_buf), XMITBUF_ALIGN_SZ);
 	ptr = pmp_priv->tx.buf;
 
-	_rtw_memset(pmp_priv->tx.desc, 0, TXDESC_SIZE);
+	memset(pmp_priv->tx.desc, 0, TXDESC_SIZE);
 	pkt_start = ptr;
 	pkt_end = pkt_start + pkt_size;
 
@@ -1641,9 +1641,9 @@ void SetPacketTx(PADAPTER padapter)
 	SetFrameSubType(&hdr->frame_ctl, pattrib->subtype);
 	//
 	SetFrDs(&hdr->frame_ctl);
-	_rtw_memcpy(hdr->addr1, pattrib->dst, ETH_ALEN); // DA
-	_rtw_memcpy(hdr->addr2, pattrib->src, ETH_ALEN); // SA
-	_rtw_memcpy(hdr->addr3, get_bssid(&padapter->mlmepriv), ETH_ALEN); // RA, BSSID
+	memcpy(hdr->addr1, pattrib->dst, ETH_ALEN); // DA
+	memcpy(hdr->addr2, pattrib->src, ETH_ALEN); // SA
+	memcpy(hdr->addr3, get_bssid(&padapter->mlmepriv), ETH_ALEN); // RA, BSSID
 
 	//3 5. make payload
 	ptr = pkt_start + pattrib->hdrlen;
@@ -1676,8 +1676,8 @@ void SetPacketTx(PADAPTER padapter)
 			pmp_priv->TXradomBuffer[i] = rtw_random32() %0xFF;
 	}
 	//startPlace = (u32)(rtw_random32() % 3450);
-	_rtw_memcpy(ptr, pmp_priv->TXradomBuffer,pkt_end - ptr);
-	//_rtw_memset(ptr, payload, pkt_end - ptr);
+	memcpy(ptr, pmp_priv->TXradomBuffer,pkt_end - ptr);
+	//memset(ptr, payload, pkt_end - ptr);
 	rtw_mfree(pmp_priv->TXradomBuffer,4096);
 	//3 6. start thread
 #ifdef PLATFORM_LINUX

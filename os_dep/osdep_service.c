@@ -804,23 +804,6 @@ void rtw_mfree2d(void *pbuf, int h, int w, int size)
 	rtw_mfree((u8 *)pbuf, h*sizeof(void*) + w*h*size);
 }
 
-void _rtw_memcpy(void* dst, void* src, u32 sz)
-{
-
-#if defined (PLATFORM_LINUX)|| defined (PLATFORM_FREEBSD)
-
-	memcpy(dst, src, sz);
-
-#endif	
-
-#ifdef PLATFORM_WINDOWS
-
-	NdisMoveMemory(dst, src, sz);
-
-#endif
-
-}
-
 int	_rtw_memcmp(void *dst, void *src, u32 sz)
 {
 
@@ -846,26 +829,6 @@ int	_rtw_memcmp(void *dst, void *src, u32 sz)
 	
 	
 	
-}
-
-void _rtw_memset(void *pbuf, int c, u32 sz)
-{
-
-#if defined (PLATFORM_LINUX)|| defined (PLATFORM_FREEBSD)
-
-        memset(pbuf, c, sz);
-
-#endif
-
-#ifdef PLATFORM_WINDOWS
-#if 0
-	NdisZeroMemory(pbuf, sz);
-	if (c != 0) memset(pbuf, c, sz);
-#else
-	NdisFillMemory(pbuf, sz, c);
-#endif
-#endif
-
 }
 
 #ifdef PLATFORM_FREEBSD
@@ -2182,7 +2145,7 @@ int rtw_change_ifname(_adapter *padapter, const char *ifname)
 
 	rtw_init_netdev_name(pnetdev, ifname);
 
-	_rtw_memcpy(pnetdev->dev_addr, padapter->eeprompriv.mac_addr, ETH_ALEN);
+	memcpy(pnetdev->dev_addr, padapter->eeprompriv.mac_addr, ETH_ALEN);
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,26))
 	if(!rtnl_is_locked())
@@ -2353,7 +2316,7 @@ void rtw_buf_update(u8 **buf, u32 *buf_len, u8 *src, u32 src_len)
 	dup = rtw_malloc(src_len);
 	if (dup) {
 		dup_len = src_len;
-		_rtw_memcpy(dup, src, dup_len);
+		memcpy(dup, src, dup_len);
 	}
 
 keep_ori:

@@ -105,7 +105,7 @@ struct beamforming_entry	*beamforming_add_entry(PADAPTER adapter, u8* ra, u16 ai
 			pEntry->p_aid =  ra[5];						// BSSID[39:47]
 			pEntry->p_aid = (pEntry->p_aid << 1) | (ra[4] >> 7 );
 		}
-		_rtw_memcpy(pEntry->mac_addr, ra, ETH_ALEN);
+		memcpy(pEntry->mac_addr, ra, ETH_ALEN);
 		pEntry->bSound = _FALSE;
 
 		//3 TODO SW/FW sound period
@@ -243,7 +243,7 @@ u32	beamforming_get_report_frame(PADAPTER	 Adapter, union recv_frame *precv_fram
 		pBeamformEntry->DefaultCsiCnt ++;
 		//DBG_871X("%s CSI report is the SAME with previos one\n", __FUNCTION__);
 	}
-	_rtw_memcpy(&pBeamformEntry->PreCsiReport, pframe, frame_len);
+	memcpy(&pBeamformEntry->PreCsiReport, pframe, frame_len);
 
 	pBeamformEntry->bDefaultCSI = _FALSE;
 
@@ -336,7 +336,7 @@ BOOLEAN	issue_ht_ndpa_packet(PADAPTER Adapter, u8 *ra, CHANNEL_WIDTH bw, u8 qidx
 	pattrib->order = 1;
 	pattrib->subtype = WIFI_ACTION_NOACK;
 
-	_rtw_memset(pmgntframe->buf_addr, 0, WLANHDR_OFFSET + TXDESC_OFFSET);
+	memset(pmgntframe->buf_addr, 0, WLANHDR_OFFSET + TXDESC_OFFSET);
 
 	pframe = (u8 *)(pmgntframe->buf_addr) + TXDESC_OFFSET;
 
@@ -348,9 +348,9 @@ BOOLEAN	issue_ht_ndpa_packet(PADAPTER Adapter, u8 *ra, CHANNEL_WIDTH bw, u8 qidx
 	SetOrderBit(pframe);
 	SetFrameSubType(pframe, WIFI_ACTION_NOACK);
 
-	_rtw_memcpy(pwlanhdr->addr1, ra, ETH_ALEN);
-	_rtw_memcpy(pwlanhdr->addr2, myid(&(Adapter->eeprompriv)), ETH_ALEN);
-	_rtw_memcpy(pwlanhdr->addr3, get_my_bssid(&(pmlmeinfo->network)), ETH_ALEN);
+	memcpy(pwlanhdr->addr1, ra, ETH_ALEN);
+	memcpy(pwlanhdr->addr2, myid(&(Adapter->eeprompriv)), ETH_ALEN);
+	memcpy(pwlanhdr->addr3, get_my_bssid(&(pmlmeinfo->network)), ETH_ALEN);
 
 	if( pmlmeext->cur_wireless_mode == WIRELESS_11B)
 		aSifsTime = 10;
@@ -370,7 +370,7 @@ BOOLEAN	issue_ht_ndpa_packet(PADAPTER Adapter, u8 *ra, CHANNEL_WIDTH bw, u8 qidx
 	SET_HT_CTRL_CSI_STEERING(pframe+24, 3);
 	SET_HT_CTRL_NDP_ANNOUNCEMENT(pframe+24, 1);
 
-	_rtw_memcpy(pframe+28, ActionHdr, 4);
+	memcpy(pframe+28, ActionHdr, 4);
 
 	pattrib->pktlen = 32;
 
@@ -417,7 +417,7 @@ BOOLEAN	issue_vht_ndpa_packet(PADAPTER Adapter, u8 *ra, u16 aid, CHANNEL_WIDTH b
 	pattrib->bwmode = bw;
 	pattrib->subtype = WIFI_NDPA;
 
-	_rtw_memset(pmgntframe->buf_addr, 0, WLANHDR_OFFSET + TXDESC_OFFSET);
+	memset(pmgntframe->buf_addr, 0, WLANHDR_OFFSET + TXDESC_OFFSET);
 
 	pframe = (u8 *)(pmgntframe->buf_addr) + TXDESC_OFFSET;
 
@@ -428,8 +428,8 @@ BOOLEAN	issue_vht_ndpa_packet(PADAPTER Adapter, u8 *ra, u16 aid, CHANNEL_WIDTH b
 
 	SetFrameSubType(pframe, WIFI_NDPA);
 
-	_rtw_memcpy(pwlanhdr->addr1, ra, ETH_ALEN);
-	_rtw_memcpy(pwlanhdr->addr2, myid(&(Adapter->eeprompriv)), ETH_ALEN);
+	memcpy(pwlanhdr->addr1, ra, ETH_ALEN);
+	memcpy(pwlanhdr->addr2, myid(&(Adapter->eeprompriv)), ETH_ALEN);
 
 	if (IsSupported5G(pmlmeext->cur_wireless_mode) || IsSupportedHT(pmlmeext->cur_wireless_mode))
 		aSifsTime = 16;
@@ -453,7 +453,7 @@ BOOLEAN	issue_vht_ndpa_packet(PADAPTER Adapter, u8 *ra, u16 aid, CHANNEL_WIDTH b
 	else
 		pBeamInfo->sounding_sequence++;
 
-	_rtw_memcpy(pframe+16, &sequence,1);
+	memcpy(pframe+16, &sequence,1);
 
 	if(((pmlmeinfo->state&0x03) == WIFI_FW_ADHOC_STATE) || ((pmlmeinfo->state&0x03) == WIFI_FW_AP_STATE))
 		aid = 0;		
@@ -462,7 +462,7 @@ BOOLEAN	issue_vht_ndpa_packet(PADAPTER Adapter, u8 *ra, u16 aid, CHANNEL_WIDTH b
 	sta_info.feedback_type = 0;
 	sta_info.nc_index= 0;
 	
-	_rtw_memcpy(pframe+17, (u8 *)&sta_info, 2);
+	memcpy(pframe+17, (u8 *)&sta_info, 2);
 
 	pattrib->pktlen = 19;
 
@@ -979,7 +979,7 @@ _func_enter_;
 				goto exit;
 			}
 
-			_rtw_memcpy(wk_buf, pbuf, size);
+			memcpy(wk_buf, pbuf, size);
 		} else {
 			wk_buf = NULL;
 			size = 0;

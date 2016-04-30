@@ -99,7 +99,7 @@ static void DBG_BT_INFO_INIT(PBTCDBGINFO pinfo, u8 *pbuf, u32 size)
 {
 	if (NULL == pinfo) return;
 
-	_rtw_memset(pinfo, 0, sizeof(BTCDBGINFO));
+	memset(pinfo, 0, sizeof(BTCDBGINFO));
 
 	if (pbuf && size) {
 		pinfo->info = pbuf;
@@ -124,7 +124,7 @@ void DBG_BT_INFO(u8 *dbgmsg)
 		return;
 
 	pbuf = pinfo->info + pinfo->len;
-	_rtw_memcpy(pbuf, dbgmsg, msglen);
+	memcpy(pbuf, dbgmsg, msglen);
 	pinfo->len += msglen;
 }
 
@@ -869,7 +869,7 @@ u8 halbtcoutsrc_Set(void *pBtcContext, u8 setType, void *pInBuf)
 				u8 tmpBuf[20];
 				if (dataLen)
 				{
-					_rtw_memcpy(tmpBuf, pU1Tmp+1, dataLen);
+					memcpy(tmpBuf, pU1Tmp+1, dataLen);
 				}
 //				BT_SendEventExtBtInfoControl(padapter, dataLen, &tmpBuf[0]);
 			}
@@ -885,7 +885,7 @@ u8 halbtcoutsrc_Set(void *pBtcContext, u8 setType, void *pInBuf)
 				u8 tmpBuf[20];
 				if (dataLen)
 				{
-					_rtw_memcpy(tmpBuf, pU1Tmp+1, dataLen);
+					memcpy(tmpBuf, pU1Tmp+1, dataLen);
 				}
 //				BT_SendEventExtBtCoexControl(padapter, _FALSE, dataLen, &tmpBuf[0]);
 			}
@@ -2535,7 +2535,7 @@ u8 hal_btcoex_Initialize(PADAPTER padapter)
 	u8 ret2;
 
 
-	_rtw_memset(&GLBtCoexist, 0, sizeof(GLBtCoexist));
+	memset(&GLBtCoexist, 0, sizeof(GLBtCoexist));
 	ret1 = EXhalbtcoutsrc_InitlizeVariables((void*)padapter);
 	ret2 = (ret1==_TRUE) ? _TRUE : _FALSE;
 
@@ -2712,7 +2712,7 @@ void hal_btcoex_RecordPwrMode(PADAPTER padapter, u8 *pCmdBuf, u8 cmdLen)
 		pCmdBuf[0]<<8|pCmdBuf[1],
 		pCmdBuf[2]<<24|pCmdBuf[3]<<16|pCmdBuf[4]<<8|pCmdBuf[5]));
 
-	_rtw_memcpy(GLBtCoexist.pwrModeVal, pCmdBuf, cmdLen);
+	memcpy(GLBtCoexist.pwrModeVal, pCmdBuf, cmdLen);
 }
 
 void hal_btcoex_DisplayBtCoexInfo(PADAPTER padapter, u8 *pbuf, u32 bufsize)

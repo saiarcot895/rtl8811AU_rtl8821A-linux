@@ -202,9 +202,9 @@ void rtw_reset_securitypriv( _adapter *adapter )
 		// Backup the btkip_countermeasure information.
 		// When the countermeasure is trigger, the driver have to disconnect with AP for 60 seconds.
 
-		_rtw_memset( &backupPMKIDList[ 0 ], 0x00, sizeof( RT_PMKID_LIST ) * NUM_PMKID_CACHE );
+		memset( &backupPMKIDList[ 0 ], 0x00, sizeof( RT_PMKID_LIST ) * NUM_PMKID_CACHE );
 
-		_rtw_memcpy( &backupPMKIDList[ 0 ], &adapter->securitypriv.PMKIDList[ 0 ], sizeof( RT_PMKID_LIST ) * NUM_PMKID_CACHE );
+		memcpy( &backupPMKIDList[ 0 ], &adapter->securitypriv.PMKIDList[ 0 ], sizeof( RT_PMKID_LIST ) * NUM_PMKID_CACHE );
 		backupPMKIDIndex = adapter->securitypriv.PMKIDIndex;
 		backupTKIPCountermeasure = adapter->securitypriv.btkip_countermeasure;
 		backupTKIPcountermeasure_time = adapter->securitypriv.btkip_countermeasure_time;		
@@ -212,12 +212,12 @@ void rtw_reset_securitypriv( _adapter *adapter )
 		//reset RX BIP packet number
 		pmlmeext->mgnt_80211w_IPN_rx = 0;
 #endif //CONFIG_IEEE80211W
-		_rtw_memset((unsigned char *)&adapter->securitypriv, 0, sizeof (struct security_priv));
+		memset((unsigned char *)&adapter->securitypriv, 0, sizeof (struct security_priv));
 		//_init_timer(&(adapter->securitypriv.tkip_timer),adapter->pnetdev, rtw_use_tkipkey_handler, adapter);
 
 		// Added by Albert 2009/02/18
 		// Restore the PMK information to securitypriv structure for the following connection.
-		_rtw_memcpy( &adapter->securitypriv.PMKIDList[ 0 ], &backupPMKIDList[ 0 ], sizeof( RT_PMKID_LIST ) * NUM_PMKID_CACHE );
+		memcpy( &adapter->securitypriv.PMKIDList[ 0 ], &backupPMKIDList[ 0 ], sizeof( RT_PMKID_LIST ) * NUM_PMKID_CACHE );
 		adapter->securitypriv.PMKIDIndex = backupPMKIDIndex;
 		adapter->securitypriv.btkip_countermeasure = backupTKIPCountermeasure;
 		adapter->securitypriv.btkip_countermeasure_time = backupTKIPcountermeasure_time;		
@@ -288,7 +288,7 @@ _func_enter_;
 		
 		buff = rtw_malloc(IW_CUSTOM_MAX);
 		
-		_rtw_memset(buff,0,IW_CUSTOM_MAX);
+		memset(buff,0,IW_CUSTOM_MAX);
 		
 		p=buff;
 		
@@ -303,7 +303,7 @@ _func_enter_;
 
 		p+=sprintf(p,")");
 		
-		_rtw_memset(&wrqu,0,sizeof(wrqu));
+		memset(&wrqu,0,sizeof(wrqu));
 		
 		wrqu.data.length=p-buff;
 		
@@ -403,7 +403,7 @@ void rtw_indicate_sta_assoc_event(_adapter *padapter, struct sta_info *psta)
 	
 	wrqu.addr.sa_family = ARPHRD_ETHER;	
 	
-	_rtw_memcpy(wrqu.addr.sa_data, psta->hwaddr, ETH_ALEN);
+	memcpy(wrqu.addr.sa_data, psta->hwaddr, ETH_ALEN);
 
 	DBG_871X("+rtw_indicate_sta_assoc_event\n");
 	
@@ -430,7 +430,7 @@ void rtw_indicate_sta_disassoc_event(_adapter *padapter, struct sta_info *psta)
 	
 	wrqu.addr.sa_family = ARPHRD_ETHER;	
 	
-	_rtw_memcpy(wrqu.addr.sa_data, psta->hwaddr, ETH_ALEN);
+	memcpy(wrqu.addr.sa_data, psta->hwaddr, ETH_ALEN);
 
 	DBG_871X("+rtw_indicate_sta_disassoc_event\n");
 	
@@ -573,7 +573,7 @@ int hostapd_mode_init(_adapter *padapter)
 	mac[4]=0x11;
 	mac[5]=0x12;
 				
-	_rtw_memcpy(pnetdev->dev_addr, mac, ETH_ALEN);
+	memcpy(pnetdev->dev_addr, mac, ETH_ALEN);
 	
 
 	netif_carrier_off(pnetdev);

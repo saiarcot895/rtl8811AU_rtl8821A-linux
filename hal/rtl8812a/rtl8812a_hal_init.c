@@ -347,14 +347,14 @@ void efuse_read_phymap_from_txpktbuf(
 
 			DBG_871X("%s len:%u, lenbak:%u, aaa:%u, aaabak:%u\n", __FUNCTION__, len, lenbak, aaa, aaabak);
 
-			_rtw_memcpy(pos, ((u8*)&lo32)+2, limit>=count+2?2:limit-count);
+			memcpy(pos, ((u8*)&lo32)+2, limit>=count+2?2:limit-count);
 			count+=limit>=count+2?2:limit-count;
 			pos=content+count;
 			
 		}
 		else
 		{
-			_rtw_memcpy(pos, ((u8*)&lo32), limit>=count+4?4:limit-count);
+			memcpy(pos, ((u8*)&lo32), limit>=count+4?4:limit-count);
 			count+=limit>=count+4?4:limit-count;
 			pos=content+count;
 			
@@ -362,7 +362,7 @@ void efuse_read_phymap_from_txpktbuf(
 		}
 
 		if(limit>count && len-2>count) {
-			_rtw_memcpy(pos, (u8*)&hi32, limit>=count+4?4:limit-count);
+			memcpy(pos, (u8*)&hi32, limit>=count+4?4:limit-count);
 			count+=limit>=count+4?4:limit-count;
 			pos=content+count;
 		}
@@ -395,7 +395,7 @@ static bool efuse_read_phymap(
 	//
 	// Refresh efuse init map as all 0xFF.
 	//
-	_rtw_memset(pbuf, 0xFF, limit);
+	memset(pbuf, 0xFF, limit);
 		
 	
 	//
@@ -438,7 +438,7 @@ s32 iol_read_efuse(
 
 
 	rtw_write8(padapter, REG_TDECTRL+1, txpktbuf_bndy);
-	_rtw_memset(physical_map, 0xFF, 512);
+	memset(physical_map, 0xFF, 512);
 	
 	///reg_0x106 = rtw_read8(padapter, REG_PKT_BUFF_ACCESS_CTRL);
 	//DBG_871X("%s reg_0x106:0x%02x, write 0x%02x\n", __FUNCTION__, reg_0x106, 0x69);
@@ -1296,10 +1296,10 @@ int _WriteBTFWtoTxPktBuf8812(
 
 	ReservedPagePacket = (u1Byte *)pGenBufReservedPagePacket;
 
-	_rtw_memset(ReservedPagePacket, 0, TotalPktLen);
+	memset(ReservedPagePacket, 0, TotalPktLen);
 
 #if 1//(DEV_BUS_TYPE == RT_PCI_INTERFACE)
-	_rtw_memcpy(ReservedPagePacket, FwbufferPtr, FwBufLen);
+	memcpy(ReservedPagePacket, FwbufferPtr, FwBufLen);
 
 #else
 	PlatformMoveMemory(ReservedPagePacket+Adapter->HWDescHeadLength , FwbufferPtr, FwBufLen);
@@ -1402,10 +1402,10 @@ int _WriteBTFWtoTxPktBuf8812(
 			pattrib->qsel = QSLT_BEACON;
 			pattrib->pktlen = pattrib->last_txcmdsz = FwBufLen ;
 
-			//_rtw_memset(pmgntframe->buf_addr, 0, TotalPktLen+txdesc_size);
+			//memset(pmgntframe->buf_addr, 0, TotalPktLen+txdesc_size);
 			//pmgntframe->buf_addr = ReservedPagePacket ;
 
-		_rtw_memcpy( (u8*) (pmgntframe->buf_addr + txdesc_offset), ReservedPagePacket, FwBufLen);
+		memcpy( (u8*) (pmgntframe->buf_addr + txdesc_offset), ReservedPagePacket, FwBufLen);
 		DBG_871X("[%d]===>TotalPktLen + TXDESC_OFFSET TotalPacketLen:%d \n", DLBcnCount, (FwBufLen + txdesc_offset));
 
 			dump_mgntframe(Adapter, pmgntframe);
@@ -1745,8 +1745,8 @@ hal_ReadPowerValueFromPROM8812A(
 	HAL_DATA_TYPE	*pHalData = GET_HAL_DATA(Adapter);
 	u32 rfPath, eeAddr=EEPROM_TX_PWR_INX_8812, group,TxCount=0;
 	
-	_rtw_memset(pwrInfo24G, 0, sizeof(TxPowerInfo24G));
-	_rtw_memset(pwrInfo5G, 0, sizeof(TxPowerInfo5G));
+	memset(pwrInfo24G, 0, sizeof(TxPowerInfo24G));
+	memset(pwrInfo5G, 0, sizeof(TxPowerInfo5G));
 
 	//DBG_871X("hal_ReadPowerValueFromPROM8812A(): PROMContent[0x%x]=0x%x\n", (eeAddr+1), PROMContent[eeAddr+1]);
 	if(0xFF == PROMContent[eeAddr+1])  //YJ,add,120316
@@ -3282,7 +3282,7 @@ Hal_EfuseWordEnableDataWrite8812A(	IN	PADAPTER	pAdapter,
 	u8	badworden = 0x0F;
 	u8	tmpdata[8];
 
-	_rtw_memset((PVOID)tmpdata, 0xff, PGPKT_DATA_SIZE);
+	memset((PVOID)tmpdata, 0xff, PGPKT_DATA_SIZE);
 	//RT_TRACE(COMP_EFUSE, DBG_LOUD, ("word_en = %x efuse_addr=%x\n", word_en, efuse_addr));
 
 	if(!(word_en&BIT0))
@@ -3461,8 +3461,8 @@ hal_EfusePgPacketRead_8812A(
 	if(offset>EFUSE_MAX_SECTION_JAGUAR)
 		return _FALSE;
 
-	_rtw_memset((PVOID)data, 0xff, sizeof(u8)*PGPKT_DATA_SIZE);
-	_rtw_memset((PVOID)tmpdata, 0xff, sizeof(u8)*PGPKT_DATA_SIZE);
+	memset((PVOID)data, 0xff, sizeof(u8)*PGPKT_DATA_SIZE);
+	memset((PVOID)tmpdata, 0xff, sizeof(u8)*PGPKT_DATA_SIZE);
 
 
 	//
@@ -3615,7 +3615,7 @@ hal_EfusePgPacketWrite_8812A(IN	PADAPTER	pAdapter,
 
 	//DBG_871X("hal_EfusePgPacketWrite_8812A target offset 0x%x word_en 0x%x \n", target_pkt.offset, target_pkt.word_en);
 
-	_rtw_memset((PVOID)target_pkt.data, 0xFF, sizeof(u8)*8);
+	memset((PVOID)target_pkt.data, 0xFF, sizeof(u8)*8);
 	
 	efuse_WordEnableDataRead(word_en, data, target_pkt.data);
 	target_word_cnts = Efuse_CalculateWordCnts(target_pkt.word_en);
@@ -3958,7 +3958,7 @@ hal_EfusePgPacketWrite_8812A(IN	PADAPTER	pAdapter,
 					}
 																											
 					//************	s1-2-A :cover the exist data *******************
-					_rtw_memset(originaldata, 0xff, sizeof(u8)*8);
+					memset(originaldata, 0xff, sizeof(u8)*8);
 					
 					if(Efuse_PgPacketRead( pAdapter, tmp_pkt.offset,originaldata, bPseudoTest))
 					{	//check if data exist					
@@ -4118,8 +4118,8 @@ static s32 _halReadMACAddrFromFile(PADAPTER padapter, u8 *pbuf)
 
 	curtime = rtw_get_current_time();
 
-	_rtw_memset(source_addr, 0, 18);
-	_rtw_memset(pbuf, 0, ETH_ALEN);
+	memset(source_addr, 0, 18);
+	memset(pbuf, 0, ETH_ALEN);
 
 	fp = filp_open(MAC_ADDRESS_FILE_PATH, O_RDONLY,  0);
 	if (IS_ERR(fp))
@@ -4350,7 +4350,7 @@ void InitPGData8812A(PADAPTER padapter)
 		else
 			addr = EEPROM_MAC_ADDR_8821AE;
 #endif // CONFIG_PCI_HCI
-		_rtw_memcpy(&pEEPROM->efuse_eeprom_data[addr], pEEPROM->mac_addr, ETH_ALEN);
+		memcpy(&pEEPROM->efuse_eeprom_data[addr], pEEPROM->mac_addr, ETH_ALEN);
 	}
 #else // !CONFIG_EFUSE_CONFIG_FILE
 
@@ -4449,7 +4449,7 @@ ReadChipVersion8812A(
 	dump_chip_info(ChipVersion);
 #endif
 
-	_rtw_memcpy(&pHalData->VersionID, &ChipVersion, sizeof(HAL_VERSION));
+	memcpy(&pHalData->VersionID, &ChipVersion, sizeof(HAL_VERSION));
 
 	if (IS_1T2R(ChipVersion)){
 		pHalData->rf_type = RF_1T2R;
@@ -4577,9 +4577,9 @@ void InitDefaultValue8821A(PADAPTER padapter)
 		pHalData->odmpriv.RFCalibrateInfo.ThermalValue_HP[i] = 0;
 	pHalData->EfuseHal.fakeEfuseBank = 0;
 	pHalData->EfuseHal.fakeEfuseUsedBytes = 0;
-	_rtw_memset(pHalData->EfuseHal.fakeEfuseContent, 0xFF, EFUSE_MAX_HW_SIZE);
-	_rtw_memset(pHalData->EfuseHal.fakeEfuseInitMap, 0xFF, EFUSE_MAX_MAP_LEN);
-	_rtw_memset(pHalData->EfuseHal.fakeEfuseModifiedMap, 0xFF, EFUSE_MAX_MAP_LEN);
+	memset(pHalData->EfuseHal.fakeEfuseContent, 0xFF, EFUSE_MAX_HW_SIZE);
+	memset(pHalData->EfuseHal.fakeEfuseInitMap, 0xFF, EFUSE_MAX_MAP_LEN);
+	memset(pHalData->EfuseHal.fakeEfuseModifiedMap, 0xFF, EFUSE_MAX_MAP_LEN);
 }
 
 VOID
