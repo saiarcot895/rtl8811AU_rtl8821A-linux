@@ -5001,6 +5001,7 @@ static int cfg80211_rtw_mgmt_tx(struct wiphy *wiphy,
 #else
 	struct net_device *ndev,
 #endif
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,14,0))
 	struct ieee80211_channel *chan,
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,38)) || defined(COMPAT_KERNEL_RELEASE)
 	bool offchan,
@@ -5021,6 +5022,9 @@ static int cfg80211_rtw_mgmt_tx(struct wiphy *wiphy,
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,3,0))
 	bool dont_wait_for_ack,
 #endif
+#else
+	struct cfg80211_mgmt_tx_params *params,
+#endif
 	u64 *cookie)
 {
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,6,0))
@@ -5031,7 +5035,11 @@ static int cfg80211_rtw_mgmt_tx(struct wiphy *wiphy,
 	u32 dump_limit = RTW_MAX_MGMT_TX_CNT;
 	u32 dump_cnt = 0;
 	bool ack = _TRUE;
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,14,0))
 	u8 tx_ch = (u8)ieee80211_frequency_to_channel(chan->center_freq);
+#else
+	u8 tx_ch = (u8)ieee80211_frequency_to_channel(params->chan->center_freq);
+#endif
 	u8 category, action;
 	int type = (-1);
 	u32 start = rtw_get_current_time();
@@ -5047,7 +5055,11 @@ static int cfg80211_rtw_mgmt_tx(struct wiphy *wiphy,
 	pwdev_priv = adapter_wdev_data(padapter);
 
 	/* cookie generation */
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,14,0))
 	*cookie = (unsigned long) buf;
+#else
+	*cookie = (unsigned long) params->buf;
+#endif
 
 #ifdef CONFIG_DEBUG_CFG80211
 	DBG_871X(FUNC_ADPT_FMT" len=%zu, ch=%d"
@@ -5069,24 +5081,38 @@ static int cfg80211_rtw_mgmt_tx(struct wiphy *wiphy,
 #endif /* CONFIG_DEBUG_CFG80211 */
 
 	/* indicate ack before issue frame to avoid racing with rsp frame */
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,37)) || defined(COMPAT_KERNEL_RELEASE)
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
+	rtw_cfg80211_mgmt_tx_status(padapter, *cookie, params->buf, params->len, ack, GFP_KERNEL);
+#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,37)) || defined(COMPAT_KERNEL_RELEASE)
 	rtw_cfg80211_mgmt_tx_status(padapter, *cookie, buf, len, ack, GFP_KERNEL);
 #elif  (LINUX_VERSION_CODE>=KERNEL_VERSION(2,6,34) && LINUX_VERSION_CODE<=KERNEL_VERSION(2,6,35))
 	cfg80211_action_tx_status(ndev, *cookie, buf, len, ack, GFP_KERNEL);
 #endif
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,14,0))
 	if (rtw_action_frame_parse(buf, len, &category, &action) == _FALSE) {
 		DBG_8192C(FUNC_ADPT_FMT" frame_control:0x%x\n", FUNC_ADPT_ARG(padapter),
 			le16_to_cpu(((struct rtw_ieee80211_hdr_3addr *)buf)->frame_ctl));
 		goto exit;
 	}
+#else
+	if (rtw_action_frame_parse(params->buf, params->len, &category, &action) == _FALSE) {
+		DBG_8192C(FUNC_ADPT_FMT" frame_control:0x%x\n", FUNC_ADPT_ARG(padapter),
+			le16_to_cpu(((struct rtw_ieee80211_hdr_3addr *)params->buf)->frame_ctl));
+		goto exit;
+	}
+#endif
 
 	DBG_8192C("RTW_Tx:tx_ch=%d, da="MAC_FMT"\n", tx_ch, MAC_ARG(GetAddr1Ptr(buf)));
-	#ifdef CONFIG_P2P
+#ifdef CONFIG_P2P
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,14,0))
 	if((type = rtw_p2p_check_frames(padapter, buf, len, _TRUE)) >= 0) {
+#else
+	if((type = rtw_p2p_check_frames(padapter, params->buf, params->len, _TRUE)) >= 0) {
+#endif
 		goto dump;
 	}
-	#endif
+#endif
 	if (category == RTW_WLAN_CATEGORY_PUBLIC)
 		DBG_871X("RTW_Tx:%s\n", action_public_str(action));
 	else
@@ -5102,7 +5128,11 @@ dump:
 
 	do {
 		dump_cnt++;
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,14,0))
 		tx_ret = _cfg80211_rtw_mgmt_tx(padapter, tx_ch, buf, len);
+#else
+		tx_ret = _cfg80211_rtw_mgmt_tx(padapter, tx_ch, params->buf, params->len);
+#endif
 	} while (dump_cnt < dump_limit && tx_ret != _SUCCESS);
 
 	if (tx_ret != _SUCCESS || dump_cnt > 1) {

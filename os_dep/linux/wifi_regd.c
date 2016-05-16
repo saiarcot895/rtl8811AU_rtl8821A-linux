@@ -483,17 +483,25 @@ static const struct ieee80211_regdomain *_rtw_regdomain_select(struct
 #endif
 }
 
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 9, 0))
+static int _rtw_regd_init_wiphy(struct rtw_regulatory *reg,
+				struct wiphy *wiphy,
+			    void (*reg_notifier) (struct wiphy * wiphy,
+						     struct regulatory_request *
+						     request))
+#else
 static int _rtw_regd_init_wiphy(struct rtw_regulatory *reg,
 				struct wiphy *wiphy,
 				int (*reg_notifier) (struct wiphy * wiphy,
 						     struct regulatory_request *
 						     request))
+#endif
 {
 	const struct ieee80211_regdomain *regd;
 
 	wiphy->reg_notifier = reg_notifier;
 
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 15, 0))
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 14, 0))
 	wiphy->regulatory_flags |= REGULATORY_CUSTOM_REG;
 	wiphy->regulatory_flags &= ~REGULATORY_STRICT_REG;
 	wiphy->regulatory_flags &= ~REGULATORY_DISABLE_BEACON_HINTS;
