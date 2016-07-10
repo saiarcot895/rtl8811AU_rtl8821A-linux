@@ -532,9 +532,15 @@ static struct country_code_to_enum_rd *_rtw_regd_find_country(u16 countrycode)
 	return NULL;
 }
 
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 9, 0))
+int rtw_regd_init(_adapter * padapter,
+		  void (*reg_notifier) (struct wiphy * wiphy,
+				       struct regulatory_request * request))
+#else
 int rtw_regd_init(_adapter * padapter,
 		  int (*reg_notifier) (struct wiphy * wiphy,
 				       struct regulatory_request * request))
+#endif
 {
 	//struct registry_priv  *registrypriv = &padapter->registrypriv;
 	struct wiphy *wiphy = padapter->rtw_wdev->wiphy;
@@ -559,12 +565,19 @@ int rtw_regd_init(_adapter * padapter,
 	return 0;
 }
 
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 9, 0))
+void rtw_reg_notifier(struct wiphy *wiphy, struct regulatory_request *request)
+#else
 int rtw_reg_notifier(struct wiphy *wiphy, struct regulatory_request *request)
+#endif
 {
 	struct rtw_regulatory *reg = NULL;
 
 	DBG_8192C("%s\n", __func__);
 
-	return _rtw_reg_notifier_apply(wiphy, request, reg);
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 9, 0))
+	return
+#endif
+	_rtw_reg_notifier_apply(wiphy, request, reg);
 }
 #endif //CONFIG_IOCTL_CFG80211
