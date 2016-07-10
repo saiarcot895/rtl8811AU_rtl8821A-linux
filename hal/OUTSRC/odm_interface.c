@@ -322,7 +322,7 @@ s4Byte ODM_CompareMemory(
 #if(DM_ODM_SUPPORT_TYPE & (ODM_AP|ODM_ADSL))
 	return memcmp(pBuf1,pBuf2,length);
 #elif (DM_ODM_SUPPORT_TYPE & ODM_CE )	
-	return _rtw_memcmp(pBuf1,pBuf2,length);
+	return !memcmp(pBuf1,pBuf2,length);
 #elif(DM_ODM_SUPPORT_TYPE & ODM_WIN)	
 	return PlatformCompareMemory(pBuf1,pBuf2,length);
 #endif	

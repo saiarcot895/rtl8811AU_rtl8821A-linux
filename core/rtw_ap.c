@@ -387,7 +387,7 @@ void	expire_timeout_chk(_adapter *padapter)
 
 
 #ifdef CONFIG_ATMEL_RC_PATCH
-		if (_TRUE == _rtw_memcmp((void *)(pstapriv->atmel_rc_pattern), (void *)(psta->hwaddr), ETH_ALEN))
+		if (!memcmp((void *)(pstapriv->atmel_rc_pattern), (void *)(psta->hwaddr), ETH_ALEN))
 			continue;
 		if (psta->flag_atmel_rc)
 			continue;
@@ -438,7 +438,7 @@ void	expire_timeout_chk(_adapter *padapter)
 #ifdef CONFIG_ATMEL_RC_PATCH
 		DBG_871X("%s:%d  psta=%p, %02x,%02x||%02x,%02x  \n\n", __func__,  __LINE__,
 			psta,pstapriv->atmel_rc_pattern[0], pstapriv->atmel_rc_pattern[5], psta->hwaddr[0], psta->hwaddr[5]);
-		if (_TRUE == _rtw_memcmp((void *)pstapriv->atmel_rc_pattern, (void *)(psta->hwaddr), ETH_ALEN))
+		if (!memcmp((void *)pstapriv->atmel_rc_pattern, (void *)(psta->hwaddr), ETH_ALEN))
 			continue;		
 		if (psta->flag_atmel_rc)
 			continue;
@@ -620,7 +620,7 @@ if (chk_alive_num) {
 
 		psta = rtw_get_stainfo_by_offset(pstapriv, chk_alive_list[i]);
 #ifdef CONFIG_ATMEL_RC_PATCH
-		if (_TRUE == _rtw_memcmp(  pstapriv->atmel_rc_pattern, psta->hwaddr, ETH_ALEN))
+		if (!memcmp(  pstapriv->atmel_rc_pattern, psta->hwaddr, ETH_ALEN))
 			continue;
 		if (psta->flag_atmel_rc)
 			continue;
@@ -1620,7 +1620,7 @@ int rtw_check_beacon_data(_adapter *padapter, u8 *pbuf,  int len)
 	for (p = ie + _BEACON_IE_OFFSET_; ;p += (ie_len + 2))
 	{
 		p = rtw_get_ie(p, _SSN_IE_1_, &ie_len, (pbss_network->IELength - _BEACON_IE_OFFSET_ - (ie_len + 2)));		
-		if ((p) && (_rtw_memcmp(p+2, OUI1, 4)))
+		if ((p) && (!memcmp(p+2, OUI1, 4)))
 		{
 			if(rtw_parse_wpa_ie(p, ie_len+2, &group_cipher, &pairwise_cipher, NULL) == _SUCCESS)
 			{
@@ -1693,7 +1693,7 @@ int rtw_check_beacon_data(_adapter *padapter, u8 *pbuf,  int len)
 		for (p = ie + _BEACON_IE_OFFSET_; ;p += (ie_len + 2))
 		{			
 			p = rtw_get_ie(p, _VENDOR_SPECIFIC_IE_, &ie_len, (pbss_network->IELength - _BEACON_IE_OFFSET_ - (ie_len + 2)));	
-			if((p) && _rtw_memcmp(p+2, WMM_PARA_IE, 6)) 
+			if((p) && !memcmp(p+2, WMM_PARA_IE, 6)) 
 			{
 				pmlmepriv->qospriv.qos_option = 1;	
 
@@ -1968,7 +1968,7 @@ int rtw_acl_add_sta(_adapter *padapter, u8 *addr)
 		paclnode = LIST_CONTAINOR(plist, struct rtw_wlan_acl_node, list);
 		plist = get_next(plist);
 
-		if(_rtw_memcmp(paclnode->addr, addr, ETH_ALEN))
+		if(!memcmp(paclnode->addr, addr, ETH_ALEN))
 		{
 			if(paclnode->valid == _TRUE)
 			{
@@ -2038,7 +2038,7 @@ int rtw_acl_remove_sta(_adapter *padapter, u8 *addr)
 		paclnode = LIST_CONTAINOR(plist, struct rtw_wlan_acl_node, list);
 		plist = get_next(plist);
 
-		if(_rtw_memcmp(paclnode->addr, addr, ETH_ALEN) || _rtw_memcmp(baddr, addr, ETH_ALEN))
+		if(!memcmp(paclnode->addr, addr, ETH_ALEN) || !memcmp(baddr, addr, ETH_ALEN))
 		{
 			if(paclnode->valid == _TRUE)
 			{
@@ -2339,19 +2339,19 @@ static void update_bcn_vendor_spec_ie(_adapter *padapter, u8*oui)
 {
 	DBG_871X("%s\n", __FUNCTION__);
 
-	if(_rtw_memcmp(RTW_WPA_OUI, oui, 4))
+	if(!memcmp(RTW_WPA_OUI, oui, 4))
 	{
 		update_bcn_wpa_ie(padapter);
 	}
-	else if(_rtw_memcmp(WMM_OUI, oui, 4))
+	else if(!memcmp(WMM_OUI, oui, 4))
 	{
 		update_bcn_wmm_ie(padapter);
 	}
-	else if(_rtw_memcmp(WPS_OUI, oui, 4))
+	else if(!memcmp(WPS_OUI, oui, 4))
 	{
 		update_bcn_wps_ie(padapter);
 	}
-	else if(_rtw_memcmp(P2P_OUI, oui, 4))
+	else if(!memcmp(P2P_OUI, oui, 4))
 	{
 		update_bcn_p2p_ie(padapter);
 	}

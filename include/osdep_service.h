@@ -255,8 +255,6 @@ void _rtw_usb_buffer_free(struct usb_device *dev, size_t size, void *addr, dma_a
 extern void*	rtw_malloc2d(int h, int w, int size);
 extern void	rtw_mfree2d(void *pbuf, int h, int w, int size);
 
-extern int	_rtw_memcmp(void *dst, void *src, u32 sz);
-
 extern void	_rtw_init_listhead(_list *list);
 extern u32	rtw_is_list_empty(_list *phead);
 extern void	rtw_list_insert_head(_list *plist, _list *phead);

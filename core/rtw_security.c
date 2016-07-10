@@ -2204,7 +2204,7 @@ u32	rtw_BIP_verify(_adapter *padapter, u8 *precvframe)
 		}
 		*/
 		//MIC field should be last 8 bytes of packet (packet without FCS)
-		if(_rtw_memcmp(mic, pframe+pattrib->pkt_len-8, 8))
+		if(!memcmp(mic, pframe+pattrib->pkt_len-8, 8))
 		{
 			pmlmeext->mgnt_80211w_IPN_rx = temp_ipn;
 			res=_SUCCESS;
@@ -2392,32 +2392,6 @@ static int sha256_vector(size_t num_elem, u8 *addr[], size_t *len,
 	return 0;
 }
 
-static u8 os_strlen(const char *s)
-{
-	const char *p = s;
-	while (*p)
-		p++;
-	return p - s;
-}
-
-static int os_memcmp(void *s1, void *s2, u8 n)
-{
-	unsigned char *p1 = s1, *p2 = s2;
-
-	if (n == 0)
-		return 0;
-
-	while (*p1 == *p2) {
-		p1++;
-		p2++;
-		n--;
-		if (n == 0)
-			return 0;
-	}
-
-	return *p1 - *p2;
-}
-
 /**
  * hmac_sha256_vector - HMAC-SHA256 over data vector (RFC 2104)
  * @key: Key for HMAC operations
@@ -2516,7 +2490,7 @@ static void sha256_prf(u8 *key, size_t key_len, char *label,
 	addr[0] = counter_le;
 	len[0] = 2;
 	addr[1] = (u8 *) label;
-	len[1] = os_strlen(label);
+	len[1] = strlen(label);
 	addr[2] = data;
 	len[2] = data_len;
 	addr[3] = length_le;
@@ -2954,7 +2928,7 @@ void wpa_tdls_generate_tpk(_adapter *padapter, PVOID sta)
 	 */
 	len[0] = 32;
 	len[1] = 32;
-	if (os_memcmp(SNonce, ANonce, 32) < 0) {
+	if (memcmp(SNonce, ANonce, 32) < 0) {
 		nonce[0] = SNonce;
 		nonce[1] = ANonce;
 	} else {
@@ -2972,7 +2946,7 @@ void wpa_tdls_generate_tpk(_adapter *padapter, PVOID sta)
 	 * added by the KDF anyway..
 	 */
 
-	if (os_memcmp(myid(&(padapter->eeprompriv)), psta->hwaddr, ETH_ALEN) < 0) {
+	if (memcmp(myid(&(padapter->eeprompriv)), psta->hwaddr, ETH_ALEN) < 0) {
 		memcpy(data, myid(&(padapter->eeprompriv)), ETH_ALEN);
 		memcpy(data + ETH_ALEN, psta->hwaddr, ETH_ALEN);
 	} else {
@@ -3095,7 +3069,7 @@ int tdls_verify_mic(u8 *kck, u8 trans_seq,
 		return 0;
 	rx_ftie = ftie+4;
 
-	if (os_memcmp(mic, rx_ftie, 16) == 0) {
+	if (!memcmp(mic, rx_ftie, 16)) {
 		//Valid MIC
 		return 1;
 	}

@@ -804,33 +804,6 @@ void rtw_mfree2d(void *pbuf, int h, int w, int size)
 	rtw_mfree((u8 *)pbuf, h*sizeof(void*) + w*h*size);
 }
 
-int	_rtw_memcmp(void *dst, void *src, u32 sz)
-{
-
-#if defined (PLATFORM_LINUX)|| defined (PLATFORM_FREEBSD)
-//under Linux/GNU/GLibc, the return value of memcmp for two same mem. chunk is 0
-
-	if (!(memcmp(dst, src, sz)))
-		return _TRUE;
-	else
-		return _FALSE;
-#endif
-
-
-#ifdef PLATFORM_WINDOWS
-//under Windows, the return value of NdisEqualMemory for two same mem. chunk is 1
-	
-	if (NdisEqualMemory (dst, src, sz))
-		return _TRUE;
-	else
-		return _FALSE;
-
-#endif	
-	
-	
-	
-}
-
 #ifdef PLATFORM_FREEBSD
 static inline void __list_add(_list *pnew, _list *pprev, _list *pnext)
  {

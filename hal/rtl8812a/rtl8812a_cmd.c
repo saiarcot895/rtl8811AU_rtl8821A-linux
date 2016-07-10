@@ -1695,7 +1695,7 @@ static void ConstructARPResponse(
 
 		psta = rtw_get_stainfo(&padapter->stapriv, get_my_bssid(&(pmlmeinfo->network)));
 		if (psta != NULL) {
-			if(_rtw_memcmp(&psta->dot11tkiptxmickey.skey[0],null_key, 16)==_TRUE){
+			if(!memcmp(&psta->dot11tkiptxmickey.skey[0],null_key, 16)){
 				DBG_871X("%s(): STA dot11tkiptxmickey==0\n",__FUNCTION__);
 			}
 			//start to calculate the mic code

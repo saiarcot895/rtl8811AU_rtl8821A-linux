@@ -443,7 +443,7 @@ static s32 pre_recv_entry(union recv_frame *precvframe, u8 *pphy_status)
 		//primary_myid = myid(&primary_padapter->eeprompriv);
 		secondary_myid = myid(&secondary_padapter->eeprompriv);
 
-		if(_rtw_memcmp(paddr1, secondary_myid, ETH_ALEN))
+		if(!memcmp(paddr1, secondary_myid, ETH_ALEN))
 		{			
 			//change to secondary interface
 			precvframe->u.hdr.adapter = secondary_padapter;
@@ -470,7 +470,7 @@ static s32 pre_recv_entry(union recv_frame *precvframe, u8 *pphy_status)
 					paddr3 = GetAddr3Ptr(precvframe->u.hdr.rx_data);
 				
 					if (check_fwstate(&secondary_padapter->mlmepriv, _FW_LINKED) &&
-						_rtw_memcmp(paddr3, get_bssid(&secondary_padapter->mlmepriv), ETH_ALEN))
+						!memcmp(paddr3, get_bssid(&secondary_padapter->mlmepriv), ETH_ALEN))
 					{
 						//change to secondary interface
 						precvframe->u.hdr.adapter = secondary_padapter;
@@ -478,7 +478,7 @@ static s32 pre_recv_entry(union recv_frame *precvframe, u8 *pphy_status)
 					}
 
 					if(check_fwstate(&primary_padapter->mlmepriv, _FW_LINKED) &&
-						_rtw_memcmp(paddr3, get_bssid(&primary_padapter->mlmepriv), ETH_ALEN))
+						!memcmp(paddr3, get_bssid(&primary_padapter->mlmepriv), ETH_ALEN))
 					{
 						if(clone==_FALSE)
 						{
@@ -516,7 +516,7 @@ static s32 pre_recv_entry(union recv_frame *precvframe, u8 *pphy_status)
 			
 				paddr2 = GetAddr2Ptr(precvframe->u.hdr.rx_data);
 
-				if(_rtw_memcmp(paddr2, get_bssid(&secondary_padapter->mlmepriv), ETH_ALEN))
+				if(!memcmp(paddr2, get_bssid(&secondary_padapter->mlmepriv), ETH_ALEN))
 				{
 					//change to secondary interface
 					precvframe->u.hdr.adapter = secondary_padapter;

@@ -1024,7 +1024,7 @@ int On_TDLS_Dis_Rsp(_adapter *padapter, union recv_frame *precv_frame)
 		//Record the tdls sta with lowest signal strength
 		if( (ptdlsinfo->sta_maximum == _TRUE) && (ptdls_sta->alive_count >= 1) )
 		{
-			if( _rtw_memcmp(ptdlsinfo->ss_record.macaddr, empty_addr, ETH_ALEN) )
+			if( !memcmp(ptdlsinfo->ss_record.macaddr, empty_addr, ETH_ALEN) )
 			{
 				memcpy(ptdlsinfo->ss_record.macaddr, psa, ETH_ALEN);
 				ptdlsinfo->ss_record.RxPWDBAll = pattrib->RxPWDBAll;
@@ -1044,7 +1044,7 @@ int On_TDLS_Dis_Rsp(_adapter *padapter, union recv_frame *precv_frame)
 	{
 		if( ptdlsinfo->sta_maximum == _TRUE)
 		{
-			if( _rtw_memcmp( ptdlsinfo->ss_record.macaddr, empty_addr, ETH_ALEN ) )
+			if( !memcmp( ptdlsinfo->ss_record.macaddr, empty_addr, ETH_ALEN ) )
 			{
 				//All traffics are busy, do not set up another direct link.
 				ret = _FAIL;
@@ -1191,7 +1191,7 @@ sint On_TDLS_Setup_Req(_adapter *padapter, union recv_frame *precv_frame)
 						memcpy(ptdls_sta->TDLS_RSNIE, pIE->data, pIE->Length);
 						pairwise_count = *(u16*)(ppairwise_cipher-2);
 						for(k=0;k<pairwise_count;k++){
-							if(_rtw_memcmp( ppairwise_cipher+4*k, RSN_CIPHER_SUITE_CCMP, 4)==_TRUE)
+							if(!memcmp( ppairwise_cipher+4*k, RSN_CIPHER_SUITE_CCMP, 4))
 								ccmp_included=1;
 						}
 						if(ccmp_included==0){
@@ -1220,7 +1220,7 @@ sint On_TDLS_Setup_Req(_adapter *padapter, union recv_frame *precv_frame)
 				case EID_BSSCoexistence:
 					break;
 				case _LINK_ID_IE_:
-					if(_rtw_memcmp(get_bssid(pmlmepriv), pIE->data, 6) == _FALSE)
+					if(memcmp(get_bssid(pmlmepriv), pIE->data, 6))
 					{
 						//not in the same BSS
 						ptdls_sta->stat_code=7;
@@ -1385,7 +1385,7 @@ int On_TDLS_Setup_Rsp(_adapter *padapter, union recv_frame *precv_frame)
 				ppairwise_cipher=prsnie+10;
 				memcpy(&pairwise_count, (u16*)(ppairwise_cipher-2), 2);
 				for(k=0;k<pairwise_count;k++){
-					if(_rtw_memcmp( ppairwise_cipher+4*k, RSN_CIPHER_SUITE_CCMP, 4)==_TRUE)
+					if(!memcmp( ppairwise_cipher+4*k, RSN_CIPHER_SUITE_CCMP, 4))
 						verify_ccmp=1;
 				}
 			case _EXT_CAP_IE_:
@@ -1625,7 +1625,7 @@ int On_TDLS_Dis_Req(_adapter *padapter, union recv_frame *precv_frame)
 					goto exit;
 				}
 				dst = pIE->data + 12;
-				if( (MacAddr_isBcst(dst) == _FALSE) && (_rtw_memcmp(myid(&(padapter->eeprompriv)), dst, 6) == _FALSE) )
+				if( (MacAddr_isBcst(dst) == _FALSE) && (memcmp(myid(&(padapter->eeprompriv)), dst, 6)) )
 				{
 					goto exit;
 				}

@@ -423,7 +423,7 @@ struct cfg80211_bss *rtw_cfg80211_inform_bss(_adapter *padapter, struct wlan_net
 				if (ssids[0].ssid_len == 0) {
 				}
 				else if(pssid->SsidLength == ssids[0].ssid_len &&
-					_rtw_memcmp(pssid->Ssid, ssids[0].ssid, ssids[0].ssid_len))
+					!memcmp(pssid->Ssid, ssids[0].ssid, ssids[0].ssid_len))
 				{
 					DBG_871X("%s, got sr and ssid match!\n", __func__);
 				}
@@ -669,8 +669,8 @@ void rtw_cfg80211_ibss_indicate_connect(_adapter *padapter)
 			if(scanned == NULL)
 				rtw_warn_on(1);
 
-			if (_rtw_memcmp(&(scanned->network.Ssid), &(pnetwork->Ssid), sizeof(NDIS_802_11_SSID)) == _TRUE
-				&& _rtw_memcmp(scanned->network.MacAddress, pnetwork->MacAddress, sizeof(NDIS_802_11_MAC_ADDRESS)) == _TRUE
+			if (!memcmp(&(scanned->network.Ssid), &(pnetwork->Ssid), sizeof(NDIS_802_11_SSID))
+				&& !memcmp(scanned->network.MacAddress, pnetwork->MacAddress, sizeof(NDIS_802_11_MAC_ADDRESS))
 			) {
 				if (!rtw_cfg80211_inform_bss(padapter,scanned)) {
 					DBG_871X(FUNC_ADPT_FMT" inform fail !!\n", FUNC_ADPT_ARG(padapter));
@@ -741,8 +741,8 @@ void rtw_cfg80211_indicate_connect(_adapter *padapter)
 			goto check_bss;
 		}
 
-		if (_rtw_memcmp(scanned->network.MacAddress, pnetwork->MacAddress, sizeof(NDIS_802_11_MAC_ADDRESS)) == _TRUE
-			&& _rtw_memcmp(&(scanned->network.Ssid), &(pnetwork->Ssid), sizeof(NDIS_802_11_SSID)) == _TRUE
+		if (!memcmp(scanned->network.MacAddress, pnetwork->MacAddress, sizeof(NDIS_802_11_MAC_ADDRESS))
+			&& !memcmp(&(scanned->network.Ssid), &(pnetwork->Ssid), sizeof(NDIS_802_11_SSID))
 		) {
 			if (!rtw_cfg80211_inform_bss(padapter,scanned)) {
 				DBG_871X(FUNC_ADPT_FMT" inform fail !!\n", FUNC_ADPT_ARG(padapter));
@@ -1368,7 +1368,7 @@ _func_enter_;
 		if(param->u.crypt.set_tx == 1)
 		{
 			list_for_each_entry(pWapiSta, &pWapiInfo->wapiSTAUsedList, list) {
-				if(_rtw_memcmp(pWapiSta->PeerMacAddr,param->sta_addr,6))
+				if(!memcmp(pWapiSta->PeerMacAddr,param->sta_addr,6))
 				{
 					memcpy(pWapiSta->lastTxUnicastPN,WapiASUEPNInitialValueSrc,16);
 
@@ -1397,7 +1397,7 @@ _func_enter_;
 		else
 		{
 			list_for_each_entry(pWapiSta, &pWapiInfo->wapiSTAUsedList, list) {
-				if(_rtw_memcmp(pWapiSta->PeerMacAddr,get_bssid(pmlmepriv),6))
+				if(!memcmp(pWapiSta->PeerMacAddr,get_bssid(pmlmepriv),6))
 				{
 					pWapiSta->wapiMsk.bSet = true;
 					memcpy(pWapiSta->wapiMsk.dataKey,param->u.crypt.key,16);
@@ -1694,7 +1694,7 @@ static int cfg80211_rtw_get_station(struct wiphy *wiphy,
 	{
 		struct wlan_network  *cur_network = &(pmlmepriv->cur_network);
 
-		if (_rtw_memcmp(mac, cur_network->network.MacAddress, ETH_ALEN) == _FALSE) {
+		if (memcmp(mac, cur_network->network.MacAddress, ETH_ALEN)) {
 			DBG_871X("%s, mismatch bssid="MAC_FMT"\n", __func__, MAC_ARG(cur_network->network.MacAddress));
 			ret = -ENOENT;
 			goto exit;
@@ -2187,7 +2187,7 @@ if (padapter->registrypriv.mp_mode == 1)
 	if( pwdinfo->driver_interface == DRIVER_CFG80211 )
 	{
 		if(ssids->ssid != NULL
-			&& _rtw_memcmp(ssids->ssid, "DIRECT-", 7)
+			&& !memcmp(ssids->ssid, "DIRECT-", 7)
 			&& rtw_get_p2p_ie((u8 *)request->ie, request->ie_len, NULL, NULL)
 		)
 		{
@@ -3288,7 +3288,7 @@ static int cfg80211_rtw_set_pmksa(struct wiphy *wiphy,
 
 	DBG_871X(FUNC_NDEV_FMT"\n", FUNC_NDEV_ARG(ndev));
 
-	if ( _rtw_memcmp( pmksa->bssid, strZeroMacAddress, ETH_ALEN ) == _TRUE )
+	if ( !memcmp( pmksa->bssid, strZeroMacAddress, ETH_ALEN ) )
 	{
 		return -EINVAL;
 	}
@@ -3298,7 +3298,7 @@ static int cfg80211_rtw_set_pmksa(struct wiphy *wiphy,
 	//overwrite PMKID
 	for(index=0 ; index<NUM_PMKID_CACHE; index++)
 	{
-		if( _rtw_memcmp( psecuritypriv->PMKIDList[index].Bssid, pmksa->bssid, ETH_ALEN) ==_TRUE )
+		if( !memcmp( psecuritypriv->PMKIDList[index].Bssid, pmksa->bssid, ETH_ALEN) )
 		{ // BSSID is matched, the same AP => rewrite with new PMKID.
 			DBG_871X(FUNC_NDEV_FMT" BSSID exists in the PMKList.\n", FUNC_NDEV_ARG(ndev));
 
@@ -3342,7 +3342,7 @@ static int cfg80211_rtw_del_pmksa(struct wiphy *wiphy,
 
 	for(index=0 ; index<NUM_PMKID_CACHE; index++)
 	{
-		if( _rtw_memcmp( psecuritypriv->PMKIDList[index].Bssid, pmksa->bssid, ETH_ALEN) ==_TRUE )
+		if( !memcmp( psecuritypriv->PMKIDList[index].Bssid, pmksa->bssid, ETH_ALEN))
 		{ // BSSID is matched, the same AP => Remove this PMKID information and reset it. 
 			memset( psecuritypriv->PMKIDList[index].Bssid, 0x00, ETH_ALEN );
 			memset( psecuritypriv->PMKIDList[index].PMKID, 0x00, WLAN_PMKID_LEN );
@@ -4147,7 +4147,7 @@ static int	cfg80211_rtw_del_station(struct wiphy *wiphy, struct net_device *ndev
 		
 		plist = get_next(plist);	
 	
-		if(_rtw_memcmp(mac, psta->hwaddr, ETH_ALEN))		
+		if(!memcmp(mac, psta->hwaddr, ETH_ALEN))		
 		{
 			if(psta->dot8021xalg == 1 && psta->bpairwise_key_installed == _FALSE)
 			{

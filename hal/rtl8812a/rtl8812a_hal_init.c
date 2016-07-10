@@ -3095,7 +3095,7 @@ exit:
 #endif
 	
 #ifdef DBG_IOL_READ_EFUSE_MAP
-	if(_rtw_memcmp(logical_map, Adapter->eeprompriv.efuse_eeprom_data, 0x130) == _FALSE)
+	if(memcmp(logical_map, Adapter->eeprompriv.efuse_eeprom_data, 0x130))
 	{
 		int i;
 		DBG_871X("%s compare first 0x130 byte fail\n", __FUNCTION__);
@@ -4158,8 +4158,8 @@ static s32 _halReadMACAddrFromFile(PADAPTER padapter, u8 *pbuf)
 		DBG_8192C("WiFi MAC address: " MAC_FMT "\n", MAC_ARG(pbuf));
 	}
 
-	if (_rtw_memcmp(pbuf, null_mac_addr, ETH_ALEN) ||
-		_rtw_memcmp(pbuf, multi_mac_addr, ETH_ALEN))
+	if (!memcmp(pbuf, null_mac_addr, ETH_ALEN) ||
+		!memcmp(pbuf, multi_mac_addr, ETH_ALEN))
 	{
 		pbuf[0] = 0x00;
 		pbuf[1] = 0xe0;
