@@ -4084,7 +4084,7 @@ static int	cfg80211_rtw_add_station(struct wiphy *wiphy, struct net_device *ndev
 	return 0;
 }
 
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,0,0))
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,6,0))
 static int	cfg80211_rtw_del_station(struct wiphy *wiphy, struct net_device *ndev,
 			       const u8 *mac)
 #else
